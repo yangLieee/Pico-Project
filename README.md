@@ -1,2 +1,23 @@
-# Pico-Project
-Use RP2040 PICO Project
+# 简介
+
+本项目 硬件基于RP2040 PICO开发板软件基于FreeRTOS系统，关于PICO开发板相关资源可以参考该[中文网站](https://pico.nxez.com/pinout/pico/)，其它使用到的外设将尽可能的进行相应的介绍
+
+# 编译
+
+本工程的代码编译依赖于pico-sdk源码，这部分代码并没有上传可以自行在[github下载](https://github.com/raspberrypi/pico-sdk)，下载后配置好PICO_SDK_PATH环境变量即可按照以下方式进行代码编译
+
+```shell
+$ mkdir build
+$ cd build
+$ cmake ..
+```
+
+# 运行
+
+编译成功后将有三个编译产物：freertos.elf、freertos.bin和freertos.uf2，其中.uf2格式是USB Flashing Format简写，是一种专门为简化烧录过程设计的格式（由 Microsoft 设计），需把 `.uf2` 文件拖到板子的 USB Mass Storage 设备中即可烧录
+
+| 格式   | 含调试信息 | 直接烧录可用 | 支持 USB 拖放 | 典型用途           |
+| ------ | ---------- | ------------ | ------------- | ------------------ |
+| `.elf` | ✅ 是       | ❌ 否         | ❌ 否          | 调试、分析符号表   |
+| `.bin` | ❌ 否       | ✅ 是         | ❌ 否          | 烧录、加载到 Flash |
+| `.uf2` | ❌ 否       | ✅ 是         | ✅ 是          | 拖放烧录           |
