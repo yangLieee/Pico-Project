@@ -12,6 +12,24 @@ $ cd build
 $ cmake ..
 ```
 
+# LCD-ST7789V
+
+| ST7789V  | PICO               |        |
+| -------- | ------------------ | ------ |
+| 3V3      | 36 - 3V3-OUT       |        |
+| GND      | 38 - GND           |        |
+| LCD-RST  | 1 - GP0            | 普通IO |
+| LCD-MOSI | 5 - GP3 - SPI0_TX  | SPI0   |
+| LCD-CLK  | 4 - GP2 - SPI0_SCK | SPI0   |
+| LCD-CS   | 7 - GP5 - SPI0_CS  | SPI0   |
+| LCD-DC   | 6 - GP4            | 普通IO |
+| LCD-BLK  | 2 - GP1            | 普通IO |
+|          |                    |        |
+|          |                    |        |
+|          |                    |        |
+
+
+
 # 运行
 
 编译成功后将有三个编译产物：freertos.elf、freertos.bin和freertos.uf2，其中.uf2格式是USB Flashing Format简写，是一种专门为简化烧录过程设计的格式（由 Microsoft 设计），需把 `.uf2` 文件拖到板子的 USB Mass Storage 设备中即可烧录

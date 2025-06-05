@@ -4,11 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <stdio.h>
 #include "pico/stdlib.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "timers.h"
+#include "lcd/st7789v/st7789v.h"
 
 void vApplicationMallocFailedHook( void )
 {
@@ -126,6 +128,10 @@ void thread1(void *priv)
 
 int main() 
 {	
+    printf("====== %s %s ====== \n",__DATE__,__TIME__);
+    stdio_init_all();
+
+#if 0
 	/* Create the register test tasks as described at the top of this file.
 	These are naked functions that don't use any stack.  A stack still has
 	to be allocated to hold the task context. */
@@ -146,11 +152,86 @@ int main()
 	/* Start the kernel.  From here on, only tasks and interrupts will run. */
 	vTaskStartScheduler();
 
+	for( ;; );
 	/* If all is well, the scheduler will now be running, and the following
 	line will never be reached.  If the following line does execute, then there
 	was	insufficient FreeRTOS heap memory available for the idle and/or timer
 	tasks to be created.  See the memory management section on the FreeRTOS web
 	site, or the FreeRTOS tutorial books for more details. */
-	for( ;; );
+#else
+
+    tftInit();
+
+    uint16_t colorList[] = {
+        ST7789V_BLUE,
+        ST7789V_GREEN,
+        ST7789V_RED,      
+        ST7789V_YELLOW,      
+        ST7789V_WHITE,       
+        ST7789V_ORANGE,      
+    };
+
+#if 1
+    for(int i=0; i<6; i++) {
+        tftClear(colorList[i]);
+        sleep_ms(3000);
+    }
+#endif
+
+#if 0
+    TFTDirection dir[] = {
+        ST7789V_DIRECTION_0,
+        ST7789V_DIRECTION_90,
+        ST7789V_DIRECTION_180,
+        ST7789V_DIRECTION_270,
+    };
+
+    for(int i=0; i<4; i++) {
+        tftSetDirection(dir[i]);
+        tftClear(ST7789V_BLACK);
+        tftPlot(30, 50, ST7789V_RED);
+        tftPlot(31, 50, ST7789V_RED);
+
+        tftPlot(200, 50, ST7789V_GREEN);
+        tftPlot(201, 50, ST7789V_GREEN);
+
+        tftPlot(30, 200, ST7789V_YELLOW);
+        tftPlot(31, 201, ST7789V_YELLOW);
+
+        tftPlot(200, 200, ST7789V_WHITE);
+        tftPlot(201, 200, ST7789V_WHITE);
+
+        sleep_ms(2000);
+    }
+#endif
+#if 0
+    extern TFTDevice dev;
+
+    uint16_t colorful[320], colorIndex = 0;
+    tftSetDirection(ST7789V_DIRECTION_90);
+
+    for(int i=0; i<dev.width; i++) {
+        if( (i%53 == 0) && (i > 0)) {
+            colorIndex++;
+        }
+        colorful[i] = colorList[colorIndex];
+    }
+
+    for(int i=0; i<dev.height; i++) {
+        tftDrawArray(colorful, dev.width);
+    }
+
+    sleep_ms(1000);
+
+    for(int i=100; i>=0; i-=10) {
+        tftSetBlkLight(i);
+        sleep_ms(1000);
+    }
+#endif
+
+    while(1) {
+        sleep_ms(2000);
+    }
+#endif
 	return 0;
 }
