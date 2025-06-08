@@ -23,12 +23,13 @@ $ cmake ..
 | LCD-CLK  | 4 - GP2 - SPI0_SCK | SPI0   |
 | LCD-CS   | 7 - GP5 - SPI0_CS  | SPI0   |
 | LCD-DC   | 6 - GP4            | 普通IO |
-| LCD-BLK  | 2 - GP1            | 普通IO |
-|          |                    |        |
-|          |                    |        |
-|          |                    |        |
+| LCD-BLK  | 2 - GP1            | PWM    |
 
-
+1. 优化策略
+   - CS直接接到GND
+   - SPI 16bit传输
+   - DMA
+2. 
 
 # 运行
 

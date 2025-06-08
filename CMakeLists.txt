@@ -54,6 +54,7 @@ set(BIN_NAME freertos)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/freertos/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/freertos/portable/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lcd/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_spi/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_pwm/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_dma/include)
@@ -61,7 +62,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/ha
 file(GLOB SOURCES "freertos/*.c")
 
 set(YANGLIEEE_ADD lcd/st7789v/st7789v.c 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_spi/spi.c)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_spi/spi.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_dma/dma.c
+    )
 
 set(SOURCES ${SOURCES} ${YANGLIEEE_ADD})
 

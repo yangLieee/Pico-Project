@@ -16,52 +16,26 @@
 #define LCD_PIN_RST         0
 
 /* LCD Config */
+#define LCD_WIDTH           240
+#define LCD_HEIGHT          280
+
 #define ST7789V_WIDTH       240
 #define ST7789V_HEIGHT      320
 #define ST7789V_SIZE        (ST7789V_WIDTH * ST7789V_HEIGHT)
 
-/* Color Define */
-#define RGB565(r, g, b)     (((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3))
 
-#define ST7789V_BLACK       0x0000
-#define ST7789V_BLUE        0x001f
-#define ST7789V_GREEN       0x07e0
-#define ST7789V_RED         0xf800
-#define ST7789V_YELLOW      0xffe0
-#define ST7789V_WHITE       0xffff
-#define ST7789V_ORANGE      0xfd20
+/*
+ * ST7789V的支持得到最大分辨率为240*320，该显示屏支持240*280，故有偏移量
+ * 偏移量计算举例：（320-280）/ 2 = 20
+ */
+#define WIDTH_OFFSET        (ST7789V_WIDTH - LCD_WIDTH) / 2 
+#define HEIGHT_OFFSET       (ST7789V_HEIGHT - LCD_HEIGHT) / 2 
 
-/* Struct Param */
-typedef struct {
-    uint16_t width;
-    uint16_t height;
-} TFTDevice;
-
-typedef enum {
-    ST7789V_DIRECTION_0,
-    ST7789V_DIRECTION_90,
-    ST7789V_DIRECTION_180,
-    ST7789V_DIRECTION_270,
-} TFTDirection;
-
-
-/* Function Interface */
-
-void tftInit(void);
-
-void tftSetWindow(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
-
-void tftSetDirection(TFTDirection dir);
-
-void tftClear(uint16_t color);
-
-void tftPlot(uint16_t x, uint16_t y, uint16_t color);
-
-void tftDrawArray(uint16_t* src, size_t len);
-
-void tftSetBlkLight(uint16_t level);
-
-
+//void tftSetWindow(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+//
+//void tftPlot(uint16_t x, uint16_t y, uint16_t color);
+//
+//void tftDrawArray(uint16_t* src, size_t len);
 
 #endif  /* __ST7789V_H__ */
 
