@@ -11,6 +11,7 @@
 #include "queue.h"
 #include "timers.h"
 #include "lcd/include/display.h"
+#include "touch/CST816/CST816.h"
 
 void vApplicationMallocFailedHook( void )
 {
@@ -68,6 +69,7 @@ int main()
     printf("(%s %s) Welcome yangLieee PICO \n", __DATE__, __TIME__);
 
     lcd_init(&dev);
+    CST816_Init();
 
     uint16_t colorList[] = {
         COLOR_BLUE,
@@ -135,7 +137,6 @@ int main()
             lcd_clear(colorList[i]);
             sleep_ms(2000);
         }
-//        sleep_ms(3000);
     }
 	return 0;
 }

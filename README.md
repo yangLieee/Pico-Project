@@ -14,22 +14,21 @@ $ cmake ..
 
 # LCD-ST7789V
 
-| ST7789V  | PICO               |        |
-| -------- | ------------------ | ------ |
-| 3V3      | 36 - 3V3-OUT       |        |
-| GND      | 38 - GND           |        |
-| LCD-RST  | 1 - GP0            | 普通IO |
-| LCD-MOSI | 5 - GP3 - SPI0_TX  | SPI0   |
-| LCD-CLK  | 4 - GP2 - SPI0_SCK | SPI0   |
-| LCD-CS   | 7 - GP5 - SPI0_CS  | SPI0   |
-| LCD-DC   | 6 - GP4            | 普通IO |
-| LCD-BLK  | 2 - GP1            | PWM    |
-
-1. 优化策略
-   - CS直接接到GND
-   - SPI 16bit传输
-   - DMA
-2. 
+| ST7789V     | PICO               |                |
+| ----------- | ------------------ | -------------- |
+| 3V3         | 36 - 3V3-OUT       |                |
+| GND         | 38 - GND           |                |
+| LCD-RST     | 1 - GP0            | 普通IO         |
+| LCD-MOSI    | 5 - GP3 - SPI0_TX  | SPI0           |
+| LCD-CLK     | 4 - GP2 - SPI0_SCK | SPI0           |
+| LCD-CS      | 7 - GP5 - SPI0_CS  | SPI0           |
+| LCD-DC      | 6 - GP4            | 普通IO         |
+| LCD-BLK     | 2 - GP1            | PWM            |
+|             |                    |                |
+| TOUCH - SCL | 10 - GP7           | I2C1 - SCL     |
+| TOUCH - SDA | 9   - GP6          | I2C1 - SDA     |
+| TOUCH - RST | 11 - GP8           | 普通IO         |
+| TOUCH - INT | 12 - GP9           | 普通IO（中断） |
 
 # 运行
 

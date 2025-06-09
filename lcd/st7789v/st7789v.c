@@ -154,7 +154,6 @@ static inline int st7789v_pin_init(void)
 
 static void clearComplete(void)
 {
-    printf("---> Enter %s %d \n", __func__, clearInProcess);
     if(dma_channel_get_irq0_status(dmaClearTx)) {
         dma_channel_acknowledge_irq0(dmaClearTx);
         clearInProcess = false;
