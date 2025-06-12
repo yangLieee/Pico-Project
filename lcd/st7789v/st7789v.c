@@ -4,9 +4,9 @@
 #include "hardware/pwm.h"
 #include "hardware/dma.h"
 #include "pico/stdlib.h"
-#include "st7789v_reg.h"
 #include "st7789v.h"
-#include "display.h"
+#include "pic.h"
+#include "lcd_interface.h"
 
 static uint8_t blkPwmSlice;
 
@@ -45,38 +45,58 @@ static inline void st7789v_write_data16(const uint16_t data)
     spi_write16_blocking(LCD_SPI_PORT, &data, 1);
 }
 
-static inline void st7789v_set_windows(lcd_dev_t* dev, uint16_t sx, uint16_t sy, uint16_t dx, uint16_t dy)
+static inline void st7789v_set_windows(uint16_t sx, uint16_t sy, uint16_t dx, uint16_t dy, int dir)
 {
     uint8_t cmd = 0;
+    uint16_t x1, x2, y1, y2;
+	if (dir == 0) {
+        x1 = sx;
+        x2 = dx;
+        y1 = sy + 20;
+        y2 = dy + 20;
+	} else if (dir == 1) {
+        x1 = sx;
+        x2 = dx;
+        y1 = sy + 80;
+        y2 = dy + 80;
+	} else if (dir == 2) {
+        x1 = sx;
+        x2 = dx;
+        y1 = sy;
+        y2 = dy;
+	} else {
+        x1 = sx + 80;
+        x2 = dx + 80;
+        y1 = sy;
+        y2 = dy;
+	}
 
     cmd = 0x2a;
     st7789v_write_cmd(&cmd, 1);
-    st7789v_write_data8(sx + WIDTH_OFFSET);
-    st7789v_write_data8(dx + WIDTH_OFFSET);
+    st7789v_write_data8(x1);
+    st7789v_write_data8(x2);
 
     cmd = 0x2b;
     st7789v_write_cmd(&cmd, 1);
-    st7789v_write_data8(sy + HEIGHT_OFFSET);
-    st7789v_write_data8(dy + HEIGHT_OFFSET);
+    st7789v_write_data8(y1);
+    st7789v_write_data8(y2);
 
     cmd = 0x2c;
     st7789v_write_cmd(&cmd, 1);
 }
 
-#if 0
 void tftPlot(uint16_t x, uint16_t y, uint16_t color)
 {
-    tftSetWindow(x, y, 1, 1);
-    st7789v_write_data16(color);
+    st7789v_set_windows(x, y, x, y, 0);
+    st7789v_write_data8(color);
 }
 
 void tftDrawArray(uint16_t* src, size_t len)
 {
     for(size_t i=0; i < len; i++) {
-        st7789v_write_data16(src[i]);
+        st7789v_write_data8(src[i]);
     }
 }
-#endif
 
 static inline void st7789v_set_blk(uint16_t level)
 {
@@ -89,7 +109,7 @@ static inline void st7789v_clear_fullscreen (uint16_t color)
 {
     size_t fillsize = ST7789V_SIZE;
     for(size_t i=0; i < fillsize; i++) {
-        st7789v_write_data16(color);
+        st7789v_write_data8(color);
     }
 }
 static inline void st7789v_set_dir(lcd_dev_t* dev, lcd_dir_t dir)
@@ -99,7 +119,7 @@ static inline void st7789v_set_dir(lcd_dev_t* dev, lcd_dir_t dir)
         case LCD_DIRECTION_0:
             dev->width  = LCD_WIDTH;
             dev->height = LCD_HEIGHT;
-            temp =  MADCTL_MX;
+//            temp =  MADCTL_MX;
             break;
         case LCD_DIRECTION_90:
             dev->width  = LCD_WIDTH;
@@ -123,7 +143,7 @@ static inline void st7789v_set_dir(lcd_dev_t* dev, lcd_dir_t dir)
     uint8_t cmd[2] = {0x36, temp};
     st7789v_write_cmd(cmd, 2);
 
-    st7789v_set_windows(dev, 0, 0, dev->width, dev->height);
+    st7789v_set_windows( 0, 0, dev->width, dev->height, 0);
 }
 
 static inline void st7789v_reset(void)
@@ -206,8 +226,8 @@ static inline void st7789v_init(lcd_dev_t* dev)
     st7789v_set_dir(dev, LCD_DIRECTION_0);
 
     /* Clear TFT */
-    spi_set_format(LCD_SPI_PORT, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
-    st7789v_clear_fullscreen(COLOR_BLACK);
+//    spi_set_format(LCD_SPI_PORT, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    st7789v_clear_fullscreen(COLOR_WHITE);
 
     /* Open BackLight */
     /* freq_pwm = f_sys / period = fsys / ((TOP + 1) + DIV) */
@@ -216,6 +236,9 @@ static inline void st7789v_init(lcd_dev_t* dev)
     pwm_set_wrap(blkPwmSlice, 99);          // Set TOP
     pwm_set_chan_level(blkPwmSlice, PWM_CHAN_B, 100);
     pwm_set_enabled(blkPwmSlice, true);
+
+//    uint16_t* addr = (uint16_t*)gImage_img1;
+//    tftDrawArray(addr, 132488/2);
 
     printf("ST7789V TFT Init Ok baudrate [%d] \n", baudrate);
 }
@@ -241,9 +264,10 @@ void st7789v_dma_clear(uint16_t color)
  * LCD Interface
  */
 
-void lcd_init(lcd_dev_t* dev)
+void lcd_init()
 {
-    st7789v_init(dev);
+    lcd_dev_t dev;
+    st7789v_init(&dev);
 }
 
 void lcd_set_backlight(uint8_t level)
@@ -254,7 +278,7 @@ void lcd_set_backlight(uint8_t level)
 void lcd_clear(uint16_t color)
 {
 //    st7789v_clear_fullscreen(color);
-    st7789v_dma_clear(color);
+//    st7789v_dma_clear(color);
 //    st7789v_dma_clear_blocking(color);
 }
 
