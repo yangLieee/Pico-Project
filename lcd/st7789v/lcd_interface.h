@@ -25,13 +25,6 @@
 #define RGB565(r,g,b) (((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3))
 
 
-
-typedef struct {
-    uint32_t width;
-    uint32_t height;
-} lcd_dev_t;
-
-
 /* 旋转角度定义 */
 typedef enum {
     LCD_DIRECTION_0,
@@ -41,18 +34,36 @@ typedef enum {
 } lcd_dir_t;
 
 
+/* 屏幕参数定义 */
+typedef struct {
+    uint32_t width;
+    uint32_t height;
+    lcd_dir_t direction;
+
+    uint32_t pwm_slice;      // BackLight
+    uint32_t dma_channel;    // Data Transfer
+} lcd_dev_t;
+
+
+
 
 /* LCD 屏幕初始化 */
 void lcd_init(void);
 
-/* LCD 屏幕指定区域填充颜色 */
-void lcd_fill_color(uint16_t sx, uint16_t dx, uint16_t sy, uint16_t dy, uint16_t color);
+/* LCD 设置方向 */
+void lcd_set_direction(lcd_dir_t dir);
+
+/* LCD 设置背光等级<0-100> */
+void lcd_set_backlight(uint8_t level);
+
+/* LCD 屏幕填充颜色 */
+void lcd_fill_color(uint16_t color, bool use_dma);
 
 /* LCD 屏幕某个区域画某个颜色的点 */
 void lcd_draw_point(uint16_t x, uint16_t y, uint16_t color);
 
 /* LCD 屏幕划线 */
-void lcd_draw_line(uint16_t point1_x, uint16_t point1_y, uint16_t point2_x, uint16_t point2_y);
+void lcd_draw_line(uint16_t point1_x, uint16_t point1_y, uint16_t point2_x, uint16_t point2_y, uint16_t color);
 
 
 

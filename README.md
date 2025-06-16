@@ -30,6 +30,8 @@ $ cmake ..
 | TOUCH - RST | 11 - GP8           | 普通IO         |
 | TOUCH - INT | 12 - GP9           | 普通IO（中断） |
 
+需要注意的是这款LCD的控制IC是240x320，而panel是240x280大小
+
 # 运行
 
 编译成功后将有三个编译产物：freertos.elf、freertos.bin和freertos.uf2，其中.uf2格式是USB Flashing Format简写，是一种专门为简化烧录过程设计的格式（由 Microsoft 设计），需把 `.uf2` 文件拖到板子的 USB Mass Storage 设备中即可烧录

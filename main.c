@@ -52,12 +52,49 @@ void lcd_thread(void* priv)
         COLOR_GREEN,
         COLOR_RED,      
         COLOR_YELLOW,      
-        COLOR_WHITE,       
         COLOR_ORANGE,      
+        COLOR_BRRED,
+        COLOR_DARKBLUE,
+        COLOR_LIGHTBLUE,
+        COLOR_LGRAY,
+        COLOR_WHITE,       
     };
     while(true) {
-        printf(" %s Loop \n", __func__);
-        sleep_ms(1000);
+        /* 1. BackLight Test */
+        printf("********** BACKLIGHT TEST **********\n");
+        for(int i=0; i<100; i+=10) {
+            lcd_set_backlight(i);
+            sleep_ms(2000);
+        }
+        /* 2. Cpu Color Test */
+        printf("********** CPU COLOR FILL TEST **********\n");
+        for(int i=0; i<10; i++) {
+            lcd_fill_color(colorList[i], 0);
+            sleep_ms(2000);
+        }
+        /* 3. DMA Color Test */ 
+        printf("********** DMA COLOR FILL TEST **********\n");
+        for(int i=0; i<10; i++) {
+            lcd_fill_color(colorList[i], 1);
+            sleep_ms(2000);
+        }
+        /* 4. Draw Point Test */  
+        printf("********** DRAW POINT TEST **********\n");
+        for(int i=20; i < 100; i+=5) {
+            for(int j=100; j < 200; j+=5) {
+                lcd_draw_point(i, j, colorList[i%10]);
+                sleep_ms(10);
+            }
+        }
+        /* 5. Draw Line Test */  
+        printf("********** DRAW LINE TEST **********\n");
+        for(int i = 120, j = 120; i < 200; i += 10, j += 10) {
+            for(int m = 140, n=140; m < 200; m += 10, n += 10) {
+                lcd_draw_line(i, j, m, n, colorList[i%10]);
+                sleep_ms(10);
+            }
+        }
+
     }
 }
 
@@ -70,7 +107,7 @@ int main()
     CST816_Init();
 
     xTaskCreate(lcd_thread, "lcd_thread", 512, NULL, tskIDLE_PRIORITY, NULL);
-    xTaskCreate(touch_thread, "touch_thread", 512, NULL, tskIDLE_PRIORITY, NULL);
+    /* xTaskCreate(touch_thread, "touch_thread", 512, NULL, tskIDLE_PRIORITY, NULL); */
     vTaskStartScheduler();
 
     while(1) {
