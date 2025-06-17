@@ -96,7 +96,7 @@ void lcd_thread(void* priv)
         }
         /* 6. Draw Pictures Test */
         printf("********** DRAW PICTURE & ROTATE TEST **********\n");
-        for(int i=0; i<4; i++) {
+        for(int i=3; i>=0; i--) {
             lcd_set_direction((lcd_dir_t)i);
             lcd_draw_image(0, 0, 200, 180, image_data, LCD_CPU_SHOW);
             sleep_ms(2000);
