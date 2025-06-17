@@ -9,7 +9,6 @@
 
 static lcd_dev_t dev;
 
-
 static inline void st7789v_set_dc(bool dc)
 {
     gpio_put_masked( (1 << LCD_PIN_DC) , (dc << LCD_PIN_DC));
@@ -19,19 +18,15 @@ static inline void st7789v_write_cmd(const uint8_t *cmd, size_t len)
 {
     spi_set_format(LCD_SPI_PORT, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
     st7789v_set_dc(0);
-    spi_write_blocking(LCD_SPI_PORT, cmd, 1);
-
-    // With Param
-    if(len > 1) {
-        st7789v_set_dc(1);
-        spi_write_blocking(LCD_SPI_PORT, &cmd[1], len-1);
-    }
+    spi_write_blocking(LCD_SPI_PORT, cmd, 1);               // Send CMD
+    st7789v_set_dc(1);
+    if(len > 1) 
+        spi_write_blocking(LCD_SPI_PORT, &cmd[1], len-1);   // CMD With Data
     spi_set_format(LCD_SPI_PORT, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 }
 
 static inline void st7789v_write16_data(const uint16_t data)
 {
-    st7789v_set_dc(1);
     spi_write16_blocking(LCD_SPI_PORT, &data, 1);
 }
 
@@ -39,27 +34,17 @@ static inline void st7789v_set_address_windows(uint16_t sx, uint16_t sy, uint16_
 {
     uint8_t cmd = 0;
     uint16_t x1, x2, y1, y2;
-	if (dev.direction == LCD_DIRECTION_0) {
+	if (dev.direction == LCD_DIRECTION_0 || dev.direction == LCD_DIRECTION_180) {
         x1 = sx;
         x2 = dx;
         y1 = sy + 20;
         y2 = dy + 20;
-	} else if (dev.direction == LCD_DIRECTION_90) {
-        x1 = sx;
-        x2 = dx;
-        y1 = sy + 80;
-        y2 = dy + 80;
-	} else if (dev.direction == LCD_DIRECTION_180) {
-        x1 = sx;
-        x2 = dx;
+	} else if (dev.direction == LCD_DIRECTION_90 || dev.direction == LCD_DIRECTION_270) {
+        x1 = sx + 20;
+        x2 = dx + 20;
         y1 = sy;
         y2 = dy;
-	} else {
-        x1 = sx + 80;
-        x2 = dx + 80;
-        y1 = sy;
-        y2 = dy;
-	}
+    }
 
     cmd = 0x2a;
     st7789v_write_cmd(&cmd, 1);
@@ -80,23 +65,15 @@ static inline void st7789v_set_dir(lcd_dir_t dir)
     uint8_t temp = 0;
     switch(dir) {
         case LCD_DIRECTION_0:
-            dev.width  = LCD_WIDTH;
-            dev.height = LCD_HEIGHT;
             break;
         case LCD_DIRECTION_90:
-            dev.width  = LCD_HEIGHT;
-            dev.height = LCD_WIDTH;
-            temp =  MADCTL_MX | MADCTL_MY;
+            temp =  MADCTL_MX | MADCTL_MV;  // 0x60
             break;
         case LCD_DIRECTION_180:
-            dev.width  = LCD_WIDTH;
-            dev.height = LCD_HEIGHT;
-            temp =  MADCTL_MY;
+            temp =  MADCTL_MY | MADCTL_MX;  // 0xC0
             break;
         case LCD_DIRECTION_270:
-            dev.width  = LCD_WIDTH;
-            dev.height = LCD_HEIGHT;
-            temp =  MADCTL_MX | MADCTL_MY | MADCTL_MV;
+            temp = MADCTL_MY | MADCTL_MV;   // 0xA0 
             break;
         default:
             break;
@@ -106,7 +83,7 @@ static inline void st7789v_set_dir(lcd_dir_t dir)
     st7789v_write_cmd(cmd, 2);
 
     dev.direction = dir;
-    st7789v_set_address_windows(0, 0, dev.width -1, dev.height -1);
+    st7789v_set_address_windows(0, 0, dev.width-1, dev.height-1);
 }
 
 static inline uint32_t st7789v_pin_init(void)
@@ -190,8 +167,21 @@ static inline void st7789v_set_blk(uint16_t level)
     }
 }
 
-static inline void st7789v_dma_clear_blocking(uint16_t color, uint32_t size)
+static inline void st7789v_dma_clear(const uint16_t* data, uint32_t size)
 {
+    uint32_t chn = dev.dma_channel;
+    dma_channel_config c = dma_get_channel_config(chn);
+    channel_config_set_read_increment(&c, true);
+    dma_channel_set_config(chn, &c, false);
+    dma_channel_transfer_from_buffer_now(chn, data, size);
+}
+
+static inline void st7789v_dma_clear_blocking(const uint16_t color, uint32_t size)
+{
+    uint32_t chn = dev.dma_channel;
+    dma_channel_config c = dma_get_channel_config(chn);
+    channel_config_set_read_increment(&c, false);
+    dma_channel_set_config(chn, &c, false);
     dma_channel_transfer_from_buffer_now(dev.dma_channel, &color, size);
     dma_channel_wait_for_finish_blocking(dev.dma_channel);
 }
@@ -239,9 +229,10 @@ void lcd_set_backlight(uint8_t level)
     st7789v_set_blk(level);
 }
 
-void lcd_fill_color(uint16_t color, bool use_dma)
+void lcd_fill_color(uint16_t sx, uint16_t sy, uint16_t dx, uint16_t dy, uint16_t color, bool use_dma)
 {
-    int size = dev.width * dev.height;
+    int size = (dx - sx + 1) * (dy - sy + 1);
+    st7789v_set_address_windows(sx, sy, dx, dy);
     if(use_dma)
         st7789v_dma_clear_blocking(color, size);
     else
@@ -258,7 +249,7 @@ void lcd_draw_line(uint16_t point1_x, uint16_t point1_y, uint16_t point2_x, uint
 {
     uint16_t sx = point1_x;
     uint16_t sy = point1_y;
-    int delta_x, delta_y, step_x, step_y, err_x, err_y, distance; // 增量 和 单步方向
+    int delta_x, delta_y, step_x, step_y, err_x=0, err_y=0, distance; // 增量 和 单步方向
 
     delta_x = point2_x - point1_x;
     delta_y = point2_y - point1_y;
@@ -299,6 +290,31 @@ void lcd_draw_line(uint16_t point1_x, uint16_t point1_y, uint16_t point2_x, uint
     }
 }
 
+void lcd_draw_image(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data, lcd_show_mode mode)
+{
+    if ((x >= ST7789V_WIDTH) || (y >= ST7789V_HEIGHT))
+        return;
+    if ((x + w - 1) >= ST7789V_WIDTH)
+        return;
+    if ((y + h - 1) >= ST7789V_HEIGHT)
+        return;
+
+    st7789v_set_address_windows(x, y, x + w-1, y + h-1);
+    if(mode == LCD_CPU_SHOW) {
+        for(size_t i=0; i < w*h; i++) {
+            st7789v_write16_data(data[i]);
+        }
+    }
+    else if(mode == LCD_DMA_BLOCKING_SHOW) {
+        for(size_t i=0; i < w*h; i++) {
+            st7789v_dma_clear_blocking(data[i], 1);
+        }
+    }
+    else{
+        st7789v_dma_clear(data, w*h);
+    }
+
+}
 
 
 

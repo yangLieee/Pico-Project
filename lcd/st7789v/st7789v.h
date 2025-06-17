@@ -26,10 +26,10 @@
 
 /* Register Define */
 // 0x36 - Memory Data Access Control
-#define MADCTL_MY       (1 << 7)        // Page Address Order ( 0: 定到底; 1: 底到顶)
+#define MADCTL_MY       (1 << 7)        // Page Address Order ( 0: 顶到底; 1: 底到顶)
 #define MADCTL_MX       (1 << 6)        // Column Address Order (0: 左到右; 1: 右到左)
 #define MADCTL_MV       (1 << 5)        // Page/Column Order (0: 正常; 1: 翻转)
-#define MADCTL_ML       (1 << 4)        // Line Address Order (0: 定到底刷新; 1: 底到顶)
+#define MADCTL_ML       (1 << 4)        // Line Address Order (0: 顶到底刷新; 1: 底到顶)
 #define MADCTL_BGR      (1 << 3)        // MODE (0: RGB; 1: BGR)
 
 /* Register Init List */

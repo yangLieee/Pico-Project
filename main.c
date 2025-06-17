@@ -12,6 +12,7 @@
 #include "timers.h"
 #include "touch/CST816/CST816.h"
 #include "lcd/st7789v/lcd_interface.h"
+#include "resource/image/xiaoxin_w200_h180_rgb565.h"
 
 void vApplicationMallocFailedHook( void )
 {
@@ -62,6 +63,7 @@ void lcd_thread(void* priv)
     while(true) {
         /* 1. BackLight Test */
         printf("********** BACKLIGHT TEST **********\n");
+        lcd_fill_color(0, 0, 240, 320, COLOR_WHITE, 1);
         for(int i=0; i<100; i+=10) {
             lcd_set_backlight(i);
             sleep_ms(2000);
@@ -69,13 +71,13 @@ void lcd_thread(void* priv)
         /* 2. Cpu Color Test */
         printf("********** CPU COLOR FILL TEST **********\n");
         for(int i=0; i<10; i++) {
-            lcd_fill_color(colorList[i], 0);
+            lcd_fill_color(0, 0, 200, 200, colorList[i], 0);
             sleep_ms(2000);
         }
         /* 3. DMA Color Test */ 
         printf("********** DMA COLOR FILL TEST **********\n");
         for(int i=0; i<10; i++) {
-            lcd_fill_color(colorList[i], 1);
+            lcd_fill_color(10, 10, 210, 210, colorList[i], 1);
             sleep_ms(2000);
         }
         /* 4. Draw Point Test */  
@@ -88,13 +90,17 @@ void lcd_thread(void* priv)
         }
         /* 5. Draw Line Test */  
         printf("********** DRAW LINE TEST **********\n");
-        for(int i = 120, j = 120; i < 200; i += 10, j += 10) {
-            for(int m = 140, n=140; m < 200; m += 10, n += 10) {
-                lcd_draw_line(i, j, m, n, colorList[i%10]);
-                sleep_ms(10);
-            }
+        for(int m = 120, n = 160, i = 0; m < 200; m += 10, n += 10, i++) {
+            lcd_draw_line(m, 120, n, 160, colorList[i]);
+            sleep_ms(100);
         }
-
+        /* 6. Draw Pictures Test */
+        printf("********** DRAW PICTURE & ROTATE TEST **********\n");
+        for(int i=0; i<4; i++) {
+            lcd_set_direction((lcd_dir_t)i);
+            lcd_draw_image(0, 0, 200, 180, image_data, LCD_CPU_SHOW);
+            sleep_ms(2000);
+        }
     }
 }
 

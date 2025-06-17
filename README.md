@@ -32,6 +32,8 @@ $ cmake ..
 
 需要注意的是这款LCD的控制IC是240x320，而panel是240x280大小
 
+代码实现DC管脚默认是发送数据状态且16比特传输，当发送命令时切换成dc=0，8比特传输
+
 # 运行
 
 编译成功后将有三个编译产物：freertos.elf、freertos.bin和freertos.uf2，其中.uf2格式是USB Flashing Format简写，是一种专门为简化烧录过程设计的格式（由 Microsoft 设计），需把 `.uf2` 文件拖到板子的 USB Mass Storage 设备中即可烧录
@@ -41,3 +43,7 @@ $ cmake ..
 | `.elf` | ✅ 是       | ❌ 否         | ❌ 否          | 调试、分析符号表   |
 | `.bin` | ❌ 否       | ✅ 是         | ❌ 否          | 烧录、加载到 Flash |
 | `.uf2` | ❌ 否       | ✅ 是         | ✅ 是          | 拖放烧录           |
+
+# Q&A
+
+1. address_windows 设置是否存在问题，正确设置是否需要减1

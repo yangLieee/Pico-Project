@@ -33,6 +33,13 @@ typedef enum {
     LCD_DIRECTION_270,
 } lcd_dir_t;
 
+/* 显示图片的模式 */
+typedef enum {
+    LCD_CPU_SHOW,
+    LCD_DMA_BLOCKING_SHOW,
+    LCD_DMA_IRQ_SHOW,
+} lcd_show_mode;
+
 
 /* 屏幕参数定义 */
 typedef struct {
@@ -40,8 +47,8 @@ typedef struct {
     uint32_t height;
     lcd_dir_t direction;
 
-    uint32_t pwm_slice;      // BackLight
-    uint32_t dma_channel;    // Data Transfer
+    uint32_t pwm_slice;      // BackLight Pwm Channel
+    uint32_t dma_channel;    // Data Transfer Dma Channel
 } lcd_dev_t;
 
 
@@ -57,7 +64,7 @@ void lcd_set_direction(lcd_dir_t dir);
 void lcd_set_backlight(uint8_t level);
 
 /* LCD 屏幕填充颜色 */
-void lcd_fill_color(uint16_t color, bool use_dma);
+void lcd_fill_color(uint16_t sx, uint16_t sy, uint16_t dx, uint16_t dy, uint16_t color, bool use_dma);
 
 /* LCD 屏幕某个区域画某个颜色的点 */
 void lcd_draw_point(uint16_t x, uint16_t y, uint16_t color);
@@ -65,6 +72,8 @@ void lcd_draw_point(uint16_t x, uint16_t y, uint16_t color);
 /* LCD 屏幕划线 */
 void lcd_draw_line(uint16_t point1_x, uint16_t point1_y, uint16_t point2_x, uint16_t point2_y, uint16_t color);
 
+/* LCD屏幕显示图片 */
+void lcd_draw_image(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data, lcd_show_mode mode);
 
 
 
