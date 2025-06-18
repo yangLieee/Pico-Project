@@ -10,7 +10,7 @@
 #include "task.h"
 #include "queue.h"
 #include "timers.h"
-#include "touch/CST816/CST816.h"
+#include "touch/CST816/touch_interface.h"
 #include "lcd/st7789v/lcd_interface.h"
 #include "resource/image/xiaoxin_w200_h180_rgb565.h"
 
@@ -36,14 +36,6 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 
 void vApplicationTickHook( void )
 {
-}
-
-void touch_thread(void* priv)
-{
-    while(true) {
-        printf(" %s Loop \n", __func__);
-        sleep_ms(1000);
-    }
 }
 
 void lcd_thread(void* priv)
@@ -104,16 +96,21 @@ void lcd_thread(void* priv)
     }
 }
 
+void touch_irq_callback(touch_info_t* info)
+{
+    printf("X-Y (%d, %d) Event %d \n", info->x_pos, info->y_pos, info->event);
+}
+
 int main() 
 {	
     stdio_init_all();
     printf("(%s %s) Welcome yangLieee PICO \n", __DATE__, __TIME__);
 
     lcd_init();
-    CST816_Init();
+    touch_init();
+    touch_set_irq_callback(touch_irq_callback);
 
     xTaskCreate(lcd_thread, "lcd_thread", 512, NULL, tskIDLE_PRIORITY, NULL);
-    /* xTaskCreate(touch_thread, "touch_thread", 512, NULL, tskIDLE_PRIORITY, NULL); */
     vTaskStartScheduler();
 
     while(1) {

@@ -49,40 +49,36 @@ typedef struct
  
 /* 手势ID识别选项*/
 typedef enum  {
-	NOGESTURE = 	0x00,   //无操作
-	DOWNGLIDE = 	0x01,   //下滑
-	UPGLIDE = 		0x02,   //上滑
-	LEFTGLIDE = 	0x03,   //左滑
-	RIGHTGLIDE = 	0x04,   //右滑 
-	CLICK = 		0x05,   //点击
-	DOUBLECLICK =   0x0B,   //双击
-	LONGPRESS = 	0x0C,   //长按
+	NOGESTURE = 	0x00,   // 无操作
+	DOWNGLIDE = 	0x01,   // 下滑
+	UPGLIDE = 		0x02,   // 上滑
+	LEFTGLIDE = 	0x03,   // 左滑
+	RIGHTGLIDE = 	0x04,   // 右滑 
+	CLICK = 		0x05,   // 点击
+	DOUBLECLICK =   0x0B,   // 双击
+	LONGPRESS = 	0x0C,   // 长按
 } GestureID_TypeDef;
  
 /* 连续动作配置选项 */
 typedef enum {
 	M_DISABLE = 	0x00,   // 不需要任何连续动作
 	EnConLR = 		0x01,   // 左右滑动
-	EnConUD = 		0x02,   //上下滑动
-	EnDClick = 		0x03,   //双击
-	M_ALLENABLE =   0x07,   //启用所有连续动作配置
+	EnConUD = 		0x02,   // 上下滑动
+	EnDClick = 		0x03,   // 双击
+	M_ALLENABLE =   0x07,   // 启用所有连续动作配置
 } MotionMask_TypeDef;
  
 /* 中断低脉冲发射方式选项 */
 typedef enum {
-	OnceWLP = 		0x00,   //单词脉冲发射
-	EnMotion = 		0x10,   //运动变化
-	EnChange = 		0x20,   //检测某些特定变化
-	EnTouch = 		0x40,   //触摸事件
-	EnTest = 		0x80,   //检测中断是否正常
+	OnceWLP = 		0x00,   // 单词脉冲发射
+	EnMotion = 		0x10,   // 运动变化
+	EnChange = 		0x20,   // 检测某些特定变化
+	EnTouch = 		0x40,   // 触摸事件
+	EnTest = 		0x80,   // 检测中断是否正常
 } IrqCtl_TypeDef;
 
 
-/* 触摸屏初始化相关函数 */
-void CST816_Init(void);
- 
 /* 触摸屏操作函数 */
-void CST816_Get_XY_AXIS(CST816_Info* info);
 uint8_t CST816_Get_FingerNum(void);
 
 /* 触摸屏有关参数配置函数 */
