@@ -54,19 +54,13 @@ set(BIN_NAME freertos)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/freertos/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/freertos/portable/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lcd/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_spi/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_pwm/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_dma/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_i2c/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/driver/interface)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/resource/image)
 
 file(GLOB SOURCES "freertos/*.c")
 
-set(YANGLIEEE_ADD lcd/st7789v/st7789v.c
-    ../touch/CST816/CST816.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_spi/spi.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_i2c/i2c.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../pico-sdk/src/rp2_common/hardware_dma/dma.c
+set(YANGLIEEE_ADD driver/lcd/st7789v/st7789v.c
+    driver/touch/CST816/CST816.c
     )
 
 set(SOURCES ${SOURCES} ${YANGLIEEE_ADD})
@@ -77,11 +71,11 @@ set(SOURCES ${SOURCES} freertos/portable/port.c)
 
 add_executable(${BIN_NAME}
         ${SOURCES}
-        main.c	
+        main/main.c	
         )
 
 target_link_libraries(${BIN_NAME} pico_stdlib)
-target_link_libraries(${BIN_NAME} hardware_exception)
+target_link_libraries(${BIN_NAME} hardware_exception hardware_dma hardware_i2c hardware_spi hardware_pwm)
 
 pico_add_extra_outputs(${BIN_NAME})
 

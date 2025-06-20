@@ -10,9 +10,9 @@
 #include "task.h"
 #include "queue.h"
 #include "timers.h"
-#include "touch/CST816/touch_interface.h"
-#include "lcd/st7789v/lcd_interface.h"
-#include "resource/image/xiaoxin_w200_h180_rgb565.h"
+#include "touch_interface.h"
+#include "lcd_interface.h"
+#include "xiaoxin_w200_h180_rgb565.h"
 
 void vApplicationMallocFailedHook( void )
 {
