@@ -33,7 +33,7 @@ static inline void st7789v_write16_data(const uint16_t data)
 static inline void st7789v_set_address_windows(uint16_t sx, uint16_t sy, uint16_t dx, uint16_t dy)
 {
     uint8_t cmd = 0;
-    uint16_t x1, x2, y1, y2;
+    uint16_t x1=0, x2=0, y1=0, y2=0;
 	if (dev.direction == LCD_DIRECTION_0 || dev.direction == LCD_DIRECTION_180) {
         x1 = sx;
         x2 = dx;
@@ -216,7 +216,7 @@ void lcd_init()
     st7789v_blk_init();
     spi_set_format(LCD_SPI_PORT, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 
-    printf("TFT LCD <ST7789V> Init Ok baudrate [%d] \n", baudrate);
+    printf("TFT LCD <ST7789V> Init Ok baudrate [%ld] \n", baudrate);
 }
 
 void lcd_set_direction(lcd_dir_t dir)

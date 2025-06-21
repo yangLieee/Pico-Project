@@ -1,82 +1,46 @@
 cmake_minimum_required(VERSION 3.12)
 
-include(pico_sdk_import.cmake)
-include(pico_extras_import_optional.cmake)
+# 前缀变量(方便子文件夹添加文件)
+set(DRIVER_PREFIX     "${CMAKE_CURRENT_SOURCE_DIR}/driver")
+set(PORTING_PREFIX     "${CMAKE_CURRENT_SOURCE_DIR}/porting")
+set(THIRDPARTY_PREFIX  "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
 
-project(pico_examples C CXX ASM)
+# 导入其它CMAKE
+include(rules/driver.cmake)
+include(rules/pico_sdk_import.cmake)
+include(rules/freertos_kernel.cmake)
 
+# 设置C/C++标准
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-if (PICO_SDK_VERSION_STRING VERSION_LESS "2.1.0")
-    message(FATAL_ERROR "Raspberry Pi Pico SDK version 2.1.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
-endif()
+# 工程名字
+project(picoPrj C CXX ASM)
 
-set(PICO_EXAMPLES_PATH ${PROJECT_SOURCE_DIR})
-
-# If you want debug output from USB (pass -DPICO_STDIO_USB=1) this ensures you don't lose any debug output while USB is set up
-if (NOT DEFINED PICO_STDIO_USB_CONNECT_WAIT_TIMEOUT_MS)
-    set(PICO_STDIO_USB_CONNECT_WAIT_TIMEOUT_MS 3000)
-endif()
-
-# Initialize the SDK
+# 初始化PICO SDK
 pico_sdk_init()
 
-include(example_auto_set_url.cmake)
+# 编译参数 -Wno-format -Wno-unused-function -Wno-maybe-uninitialized 是关闭未使用未初始化的函数变量(不推荐)
+add_compile_options(-Wall -O2)
 
-function(add_subdirectory_exclude_platforms NAME)
-    if (ARGN)
-        if (PICO_PLATFORM IN_LIST ARGN)
-            message("Skipping ${NAME} example which is unsupported on this platform")
-            return()
-        endif()
-        foreach(PATTERN IN LISTS ARGN)
-            string(REGEX MATCH "${PATTERN}" MATCHED "${PICO_PLATFORM}")
-            if (MATCHED)
-                message("Skipping ${NAME} example which is unsupported on this platform")
-                return()
-            endif()
-        endforeach()
-    endif()
-    add_subdirectory(${NAME})
-endfunction()
-
-add_compile_options(-Wall
-        -Wno-format          # int != int32_t as far as the compiler is concerned because gcc has int32_t as long int
-        -Wno-unused-function # we have some for the docs that aren't called
-        )
-if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    add_compile_options(-Wno-maybe-uninitialized)
-endif()
-
-
-set(BIN_NAME freertos)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/freertos/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/freertos/portable/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/driver/interface)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/resource/image)
 
-file(GLOB SOURCES "freertos/*.c")
-
-set(YANGLIEEE_ADD driver/lcd/st7789v/st7789v.c
-    driver/touch/CST816/CST816.c
+# 所有需要编译的源文件
+set(SOURCES ${DRIVER_SRC} 
+            ${FREERTOS_SRC} 
+            main/main.c
     )
 
-set(SOURCES ${SOURCES} ${YANGLIEEE_ADD})
+# 编译可执行程序
+add_executable(${PROJECT_NAME}  ${SOURCES})
 
-set(SOURCES ${SOURCES} freertos/MemMang/heap_4.c)
-
-set(SOURCES ${SOURCES} freertos/portable/port.c)
-
-add_executable(${BIN_NAME}
-        ${SOURCES}
-        main/main.c	
-        )
-
-target_link_libraries(${BIN_NAME} pico_stdlib)
-target_link_libraries(${BIN_NAME} hardware_exception hardware_dma hardware_i2c hardware_spi hardware_pwm)
-
-pico_add_extra_outputs(${BIN_NAME})
-
-example_auto_set_url(${BIN_NAME})
+# 可执行程序链接PICO库
+target_link_libraries(${PROJECT_NAME}   pico_stdlib
+                                        hardware_dma
+                                        hardware_i2c
+                                        hardware_pwm
+                                        hardware_spi
+                                        hardware_exception
+                    )
+# 编译其它格式输出
+pico_add_extra_outputs(${PROJECT_NAME})
