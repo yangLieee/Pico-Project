@@ -48,7 +48,8 @@
 
    ```shell
    $ mkdir build
-   $ cmake ..
+   # 这个参数控制可以使用usb口作串口输出Log
+   $ cmake -DPICO_STDIO_USB=1 ..
    $ make 
    ```
 
