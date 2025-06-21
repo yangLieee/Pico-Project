@@ -19,8 +19,6 @@ project(picoPrj C CXX ASM)
 
 # 初始化PICO SDK
 pico_sdk_init()
-# 使能USB串口功能
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
 
 # 编译参数 -Wno-format -Wno-unused-function -Wno-maybe-uninitialized 是关闭未使用未初始化的函数变量(不推荐)
 add_compile_options(-Wall -O2)
@@ -46,3 +44,4 @@ target_link_libraries(${PROJECT_NAME}   pico_stdlib
                     )
 # 编译其它格式输出
 pico_add_extra_outputs(${PROJECT_NAME})
+
