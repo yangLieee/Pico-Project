@@ -14,7 +14,7 @@
 #include "lcd_interface.h"
 #include "audio_interface.h"
 #include "image/xiaoxin_w200_h180_rgb565.h"
-#include "audio/mono_u8_8k.h"
+//#include "audio/mono_u8_8k.h"
 
 void vApplicationMallocFailedHook( void )
 {
@@ -101,7 +101,7 @@ void lcd_thread(void* priv)
 void audio_thread(void* priv)
 {
     while(1) {
-        audio_playback(audio_data, audio_data_len);
+//        audio_playback(audio_data, audio_data_len);
         sleep_ms(5000);
     }
 }
