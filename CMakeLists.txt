@@ -5,6 +5,9 @@ set(DRIVER_PREFIX     "${CMAKE_CURRENT_SOURCE_DIR}/driver")
 set(PORTING_PREFIX     "${CMAKE_CURRENT_SOURCE_DIR}/porting")
 set(THIRDPARTY_PREFIX  "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
 
+# 资源文件头文件目录
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/resource/)
+
 # 导入其它CMAKE
 include(rules/driver.cmake)
 include(rules/pico_sdk_import.cmake)
@@ -22,8 +25,6 @@ pico_sdk_init()
 
 # 编译参数 -Wno-format -Wno-unused-function -Wno-maybe-uninitialized 是关闭未使用未初始化的函数变量(不推荐)
 add_compile_options(-Wall -O2)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/resource/image)
 
 # 所有需要编译的源文件
 set(SOURCES ${DRIVER_SRC} 

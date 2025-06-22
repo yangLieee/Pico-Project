@@ -12,7 +12,9 @@
 #include "timers.h"
 #include "touch_interface.h"
 #include "lcd_interface.h"
-#include "xiaoxin_w200_h180_rgb565.h"
+#include "audio_interface.h"
+#include "image/xiaoxin_w200_h180_rgb565.h"
+#include "audio/mono_u8_8k.h"
 
 void vApplicationMallocFailedHook( void )
 {
@@ -96,6 +98,14 @@ void lcd_thread(void* priv)
     }
 }
 
+void audio_thread(void* priv)
+{
+    while(1) {
+        audio_playback(audio_data, audio_data_len);
+        sleep_ms(5000);
+    }
+}
+
 void touch_irq_callback(touch_info_t* info)
 {
     printf("X-Y (%d, %d) Event %d \n", info->x_pos, info->y_pos, info->event);
@@ -108,9 +118,11 @@ int main()
 
     lcd_init();
     touch_init();
+    audio_init();
     touch_set_irq_callback(touch_irq_callback);
 
-    xTaskCreate(lcd_thread, "lcd_thread", 512, NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(lcd_thread, "lcd_thread", 512, NULL, 3, NULL);
+//    xTaskCreate(audio_thread, "audio_thread", 512, NULL, 4, NULL);
     vTaskStartScheduler();
 
     while(1) {
