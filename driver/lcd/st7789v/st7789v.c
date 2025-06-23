@@ -292,12 +292,15 @@ void lcd_draw_line(uint16_t point1_x, uint16_t point1_y, uint16_t point2_x, uint
 
 void lcd_draw_image(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data, lcd_show_mode mode)
 {
-    if ((x >= ST7789V_WIDTH) || (y >= ST7789V_HEIGHT))
+    if ((x >= ST7789V_WIDTH) || (y >= ST7789V_HEIGHT)) {
         return;
-    if ((x + w - 1) >= ST7789V_WIDTH)
+    }
+    if ((x + w - 1) >= ST7789V_WIDTH) {
         return;
-    if ((y + h - 1) >= ST7789V_HEIGHT)
+    }
+    if ((y + h - 1) >= ST7789V_HEIGHT) {
         return;
+    }
 
     st7789v_set_address_windows(x, y, x + w-1, y + h-1);
     if(mode == LCD_CPU_SHOW) {

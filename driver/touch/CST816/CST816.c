@@ -5,7 +5,7 @@
 #include "CST816.h" 
 #include "touch_interface.h"
  
-#define TOUCH_OFFSET_Y 15
+#define TOUCH_OFFSET_Y 0
 #define REVERSE 0
 
 static touch_info_t info;
@@ -68,7 +68,7 @@ static void gpio_callback(uint gpio, uint32_t events) {
 *	返 回 值: none
 *********************************************************************************************************
 */
-static inline void CST816_GPIO_Init(void)
+static inline void CST816_GPIO_Init(bool use_irq)
 {	
     i2c_init(TOUCH_IIC_PORT, TOUCH_IIC_BAUDRATE);
 
@@ -83,7 +83,11 @@ static inline void CST816_GPIO_Init(void)
     gpio_init(TOUCH_INT_PIN);
     gpio_set_dir(TOUCH_RST_PIN, true);
     gpio_set_dir(TOUCH_INT_PIN, false);
-    gpio_set_irq_enabled_with_callback(TOUCH_INT_PIN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+
+    /* IRQ Request */
+    if(use_irq) {
+        gpio_set_irq_enabled_with_callback(TOUCH_INT_PIN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+    }
 }
  
 /*
@@ -111,7 +115,7 @@ static inline void CST816_RESET(void)
 *	返 回 值: 返回芯片ID
 *********************************************************************************************************
 */
-uint8_t CST816_Get_FingerNum(void)
+static inline uint8_t CST816_Get_FingerNum(void)
 {
     uint8_t num = 0;
     CST816_IIC_ReadREG(FingerNum, &num, 1);
@@ -235,14 +239,19 @@ void CST816_Config_LpScanTH(uint8_t TH)
 /*
  * API
  */
-void touch_init(void)
+void touch_init(bool use_irq)
 {
     uint8_t id = 0;
-	CST816_GPIO_Init();
+	CST816_GPIO_Init(use_irq);
     CST816_RESET();
 	CST816_IIC_ReadREG(ChipID, &id, 1);
 	CST816_Config_AutoSleepTime(5);
     printf("CST816 TOUCH Init Ok CHIPID[0x%x] \n", id);
+}
+
+uint8_t touch_FingerNum(void)
+{
+    return CST816_Get_FingerNum();
 }
 
 void touch_set_irq_callback(touch_irq_cb cb)

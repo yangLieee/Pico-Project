@@ -2,7 +2,7 @@
 #define __LCDINTERFACE_H__
 
 #include <stdint.h>
-
+#include <stdbool.h>
 
 
 /* 常用颜色RGB565格式宏定义 */

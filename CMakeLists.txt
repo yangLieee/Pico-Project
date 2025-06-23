@@ -12,6 +12,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/resource/)
 include(rules/driver.cmake)
 include(rules/pico_sdk_import.cmake)
 include(rules/freertos_kernel.cmake)
+include(rules/lvgl_v8.3.cmake)
 
 # 设置C/C++标准
 set(CMAKE_C_STANDARD 11)
@@ -29,7 +30,10 @@ add_compile_options(-Wall -O2)
 # 所有需要编译的源文件
 set(SOURCES ${DRIVER_SRC} 
             ${FREERTOS_SRC} 
+            ${LV_SRC}
             main/main.c
+#            main/lcd_indepent_demo.c
+#            main/audio_indepent_demo.c
     )
 
 # 编译可执行程序

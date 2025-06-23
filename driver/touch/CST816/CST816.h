@@ -78,9 +78,6 @@ typedef enum {
 } IrqCtl_TypeDef;
 
 
-/* 触摸屏操作函数 */
-uint8_t CST816_Get_FingerNum(void);
-
 /* 触摸屏有关参数配置函数 */
 void CST816_Config_MotionMask(uint8_t mode);
 void CST816_Config_AutoSleepTime(uint8_t time);

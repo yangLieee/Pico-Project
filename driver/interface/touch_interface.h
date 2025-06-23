@@ -1,6 +1,8 @@
 #ifndef __TOUCH_INTERFACE_H__
 #define __TOUCH_INTERFACE_H__
 
+#include <stdbool.h>
+
 typedef enum {
     TOUCH_NONE,             // 无操作
     TOUCH_UP_GLIDE,         // 上划
@@ -23,7 +25,10 @@ typedef void (*touch_irq_cb)(touch_info_t* info);
 
 
 /* 触摸屏的初始化函数 */
-void touch_init(void);
+void touch_init(bool use_irq);
+
+/* 触摸是否发生并返回触摸手指的数量 */
+uint8_t touch_FingerNum(void);
 
 /* 设置中断回调函数 */
 void touch_set_irq_callback(touch_irq_cb cb);
