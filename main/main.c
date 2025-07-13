@@ -46,6 +46,23 @@ bool repeating_timer_callback(__unused struct repeating_timer *t) {
 extern void lv_init(void);
 extern void lv_port_disp_init(void);
 extern void lv_port_indev_init(void);
+extern void audio_demo(void);
+
+static void audio_thread(void *pvParameters)
+{
+    while (1) {
+        audio_demo();
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
+}
+
+static void lvgl_thread(void* pvParameters)
+{
+    while (1) {
+        lv_timer_handler();
+        vTaskDelay(pdMS_TO_TICKS(5));
+    }
+}
 
 int main() 
 {	
@@ -61,9 +78,14 @@ int main()
     add_repeating_timer_ms(1, repeating_timer_callback, NULL, &timer);
     lv_demo_widgets();
 
+//    xTaskCreate(audio_thread, "audio_thread", 512, NULL, 0, NULL);
+//    xTaskCreate(lvgl_thread,  "lvgl_thread",  512, NULL, 5, NULL);
+//    vTaskStartScheduler();
+
     while(1) {
         sleep_ms(5);
         lv_timer_handler();
     }
+
     return 0;
 }

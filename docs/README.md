@@ -24,6 +24,18 @@
 
 ```
 
+# 功能
+
+1. 支持 RP2040 和 RP2350 两个平台
+
+   通过rules/option.cmake配置选项进行配置即可
+
+2. 支持USB作串口DEBUG（默认打开）
+
+3. 支持LVGL
+
+4. 支持PWM AUDIO
+
 # 下载及编译
 
 1. 下载
@@ -48,8 +60,8 @@
 
    ```shell
    $ mkdir build
-   # 这个参数控制可以使用usb口作串口输出Log
-   $ cmake -DPICO_STDIO_USB=1 ..
+   # 默认USB作串口DEBUG
+   $ cmake ..
    $ make 
    ```
 
@@ -107,3 +119,10 @@
 2. DMA模式只传输一次就失败?
 
    初始化后DC=1，DMA传输设置会将DC=0，但是状态没有切回来导致DMA再次传输失败；修改方法即在Send Command之前切成CS=0 8bit传输而命令传输完成立马切成CS=1 16bit传输的状态，这将不会导致问题的出现
+
+3. 在CMakeLists中add_compile_options添加 -DPICO_STDIO_USB=1 不生效？
+   生效的时间比较晚，通常在pico_sdk_init()阶段已经读取配置成功，只能在这个函数执行之前通过set或者option进行设置
+
+# TODO
+
+1. lvgl屏幕适配文件驱动 full_refresh=1 出错

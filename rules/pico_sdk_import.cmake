@@ -5,6 +5,14 @@ set(PICO_SDK_PATH   "${THIRDPARTY_PREFIX}/pico-sdk")
 # PICO TOOLCHAIN 路径 自行设置
 #set(PICO_TOOLCHAIN_PATH "")
 
+if(USE_RP2350)
+    set(PICO_PLATFORM rp2350)
+    add_compile_options(-DPLATFORM_RP2350=1)
+elseif(USE_RP2040)
+    set(PICO_PLATFORM rp2040)
+    add_compile_options(-DPLATFORM_RP2040=1)
+endif()
+
 # PICO SDK INIT CMAKE 位置
 set(PICO_SDK_INIT_CMAKE_FILE ${PICO_SDK_PATH}/pico_sdk_init.cmake)
 

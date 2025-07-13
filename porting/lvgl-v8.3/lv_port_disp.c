@@ -57,46 +57,17 @@ void lv_port_disp_init(void)
     /*-----------------------------
      * Create a buffer for drawing
      *----------------------------*/
+#if(PLATFORM_RP2350)
+    #define BUFFER_SIZE     (MY_DISP_HOR_RES * MY_DISP_VER_RES)
+#elif(PLATFORM_RP2040)
+    #define BUFFER_SIZE     (MY_DISP_HOR_RES * 100)
+#endif
 
-    /**
-     * LVGL requires a buffer where it internally draws the widgets.
-     * Later this buffer will passed to your display driver's `flush_cb` to copy its content to your display.
-     * The buffer has to be greater than 1 display row
-     *
-     * There are 3 buffering configurations:
-     * 1. Create ONE buffer:
-     *      LVGL will draw the display's content here and writes it to your display
-     *
-     * 2. Create TWO buffer:
-     *      LVGL will draw the display's content to a buffer and writes it your display.
-     *      You should use DMA to write the buffer's content to the display.
-     *      It will enable LVGL to draw the next part of the screen to the other buffer while
-     *      the data is being sent form the first buffer. It makes rendering and flushing parallel.
-     *
-     * 3. Double buffering
-     *      Set 2 screens sized buffers and set disp_drv.full_refresh = 1.
-     *      This way LVGL will always provide the whole rendered screen in `flush_cb`
-     *      and you only need to change the frame buffer's address.
-     */
+    static lv_disp_draw_buf_t draw_buf_dsc;
+    static lv_color_t buf_1[BUFFER_SIZE];
+    static lv_color_t buf_2[BUFFER_SIZE];
+    lv_disp_draw_buf_init(&draw_buf_dsc, buf_1, buf_2, BUFFER_SIZE);
 
-    /* Example for 1) */
-    static lv_disp_draw_buf_t draw_buf_dsc_1;
-    static lv_color_t buf_1[MY_DISP_HOR_RES * 10];                          /*A buffer for 10 rows*/
-    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * 10);   /*Initialize the display buffer*/
-
-    /* Example for 2) */
-//    static lv_disp_draw_buf_t draw_buf_dsc_2;
-//    static lv_color_t buf_2_1[MY_DISP_HOR_RES * 10];                        /*A buffer for 10 rows*/
-//    static lv_color_t buf_2_2[MY_DISP_HOR_RES * 10];                        /*An other buffer for 10 rows*/
-//    lv_disp_draw_buf_init(&draw_buf_dsc_2, buf_2_1, buf_2_2, MY_DISP_HOR_RES * 10);   /*Initialize the display buffer*/
-//
-//    /* Example for 3) also set disp_drv.full_refresh = 1 below*/
-//    static lv_disp_draw_buf_t draw_buf_dsc_3;
-//    static lv_color_t buf_3_1[MY_DISP_HOR_RES * MY_DISP_VER_RES];            /*A screen sized buffer*/
-//    static lv_color_t buf_3_2[MY_DISP_HOR_RES * MY_DISP_VER_RES];            /*Another screen sized buffer*/
-//    lv_disp_draw_buf_init(&draw_buf_dsc_3, buf_3_1, buf_3_2,
-//                          MY_DISP_VER_RES * LV_VER_RES_MAX);   /*Initialize the display buffer*/
-//
     /*-----------------------------------
      * Register the display in LVGL
      *----------------------------------*/
@@ -114,10 +85,15 @@ void lv_port_disp_init(void)
     disp_drv.flush_cb = disp_flush;
 
     /*Set a display buffer*/
-    disp_drv.draw_buf = &draw_buf_dsc_1;
+    disp_drv.draw_buf = &draw_buf_dsc;
 
-    /*Required for Example 3)*/
-    //disp_drv.full_refresh = 1;
+#if(PLATFORM_RP2350)
+    /* BUG TODO */
+    /* disp_drv.full_refresh = 1; */
+#endif
+
+    disp_drv.sw_rotate = 1;   			 // add for rotation
+    disp_drv.rotated = LV_DISP_ROT_270;  // add for rotation
 
     /* Fill a memory array with a color if you have GPU.
      * Note that, in lv_conf.h you can enable GPUs that has built-in support in LVGL.
@@ -136,6 +112,7 @@ void lv_port_disp_init(void)
 static void disp_init(void)
 {
     lcd_init();
+    /* lcd_set_direction(LCD_DIRECTION_90); */
 }
 
 volatile bool disp_flush_enabled = true;

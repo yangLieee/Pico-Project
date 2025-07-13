@@ -9,6 +9,7 @@ set(THIRDPARTY_PREFIX  "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/resource/)
 
 # 导入其它CMAKE
+include(rules/option.cmake)
 include(rules/driver.cmake)
 include(rules/pico_sdk_import.cmake)
 include(rules/freertos_kernel.cmake)
@@ -32,6 +33,7 @@ set(SOURCES ${DRIVER_SRC}
             ${FREERTOS_SRC} 
             ${LV_SRC}
             main/main.c
+            main/ui/control.c
 #            main/lcd_indepent_demo.c
 #            main/audio_indepent_demo.c
     )
