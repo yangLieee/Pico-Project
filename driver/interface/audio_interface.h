@@ -3,13 +3,18 @@
 
 #include <stdint.h>
 
-
-
-/* 音频初始化函数 */
+/**
+ * @brief 初始化音频系统
+ */
 void audio_init(void);
 
-/* 播放音频函数 */
+/**
+ * @brief 播放音频数据
+ * @param data 指向音频数据的指针
+ * @param size 音频数据长度（单位：字节）
+ */
 void audio_playback(void* data, uint32_t size);
+
 
 #endif /* __AUDIOINTERFACE_H__ */
 
