@@ -1,0 +1,1 @@
+GEN_CSRCS += _Setting_alpha_70x70.c _Game_alpha_70x70.c _Video_alpha_70x70.c _music_alpha_70x70.c

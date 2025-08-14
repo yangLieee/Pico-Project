@@ -11,6 +11,7 @@
 #include "queue.h"
 #include "timers.h"
 #include "lvgl.h"
+#include "ui/screen/gui_guider.h"
 
 void vApplicationMallocFailedHook( void )
 {
@@ -64,6 +65,7 @@ static void lvgl_thread(void* pvParameters)
     }
 }
 
+lv_ui guider_ui;
 int main() 
 {	
     stdio_init_all();
@@ -76,7 +78,9 @@ int main()
     lv_port_indev_init();               // 注册LVGL触屏任务
 
     add_repeating_timer_ms(1, repeating_timer_callback, NULL, &timer);
-    lv_demo_widgets();
+    setup_ui(&guider_ui);
+
+//    lv_demo_widgets();
 
 //    xTaskCreate(audio_thread, "audio_thread", 512, NULL, 0, NULL);
 //    xTaskCreate(lvgl_thread,  "lvgl_thread",  512, NULL, 5, NULL);
