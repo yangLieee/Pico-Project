@@ -29,9 +29,9 @@ pico_sdk_init()
 add_compile_options(-Wall -O2)
 
 # 所有需要编译的源文件
+file(GLOB_RECURSE FONTS_SOURCES  main/ui/fonts/*.c)
 file(GLOB_RECURSE SCREEN_SOURCES main/ui/screen/*.c)
 file(GLOB_RECURSE IMAGES_SOURCES main/ui/images/*.c)
-file(GLOB_RECURSE FONTS_SOURCES main/ui/guider_fonts/*.c)
 set(SOURCES ${DRIVER_SRC} 
             ${FREERTOS_SRC} 
             ${LV_SRC}

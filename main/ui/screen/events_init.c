@@ -95,7 +95,7 @@ static void screen_menu_img_game_event_handler (lv_event_t *e)
     switch (code) {
     case LV_EVENT_CLICKED:
     {
-        ui_load_scr_animation(&guider_ui, &guider_ui.screen_game, guider_ui.screen_game_del, &guider_ui.screen_menu_del, setup_scr_screen_game, LV_SCR_LOAD_ANIM_FADE_ON, 200, 100, false, true);
+        ui_load_scr_animation(&guider_ui, &guider_ui.screen_game, guider_ui.screen_game_del, &guider_ui.screen_menu_del, setup_scr_screen_game, LV_SCR_LOAD_ANIM_FADE_ON, 0, 100, false, true);
         break;
     }
     default:
@@ -123,7 +123,7 @@ static void screen_menu_img_video_event_handler (lv_event_t *e)
     switch (code) {
     case LV_EVENT_CLICKED:
     {
-        ui_load_scr_animation(&guider_ui, &guider_ui.screen_video, guider_ui.screen_video_del, &guider_ui.screen_menu_del, setup_scr_screen_video, LV_SCR_LOAD_ANIM_FADE_ON, 200, 100, false, true);
+        ui_load_scr_animation(&guider_ui, &guider_ui.screen_video, guider_ui.screen_video_del, &guider_ui.screen_menu_del, setup_scr_screen_video, LV_SCR_LOAD_ANIM_FADE_ON, 100, 100, false, true);
         break;
     }
     default:

@@ -10,7 +10,6 @@
 #include "lvgl.h"
 #include <stdio.h>
 #include "gui_guider.h"
-#include "widgets_init.h"
 
 #if LV_USE_GUIDER_SIMULATOR && LV_USE_FREEMASTER
 #include "gg_external_data.h"

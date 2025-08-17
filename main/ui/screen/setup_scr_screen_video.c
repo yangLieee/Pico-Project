@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include "gui_guider.h"
 #include "events_init.h"
-#include "widgets_init.h"
 
 
 void setup_scr_screen_video(lv_ui *ui)

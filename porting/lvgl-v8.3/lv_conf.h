@@ -11,9 +11,6 @@
  *    - add the path as include path
  */
 
-/* clang-format off */
-#if 1 /*Set it to "1" to enable content*/
-
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
@@ -366,7 +363,7 @@
 #define LV_FONT_MONTSERRAT_12 0
 #define LV_FONT_MONTSERRAT_14 1
 #define LV_FONT_MONTSERRAT_16 0
-#define LV_FONT_MONTSERRAT_18 0
+#define LV_FONT_MONTSERRAT_18 1
 #define LV_FONT_MONTSERRAT_20 0
 #define LV_FONT_MONTSERRAT_22 0
 #define LV_FONT_MONTSERRAT_24 0
@@ -776,9 +773,5 @@
     #define LV_DEMO_MUSIC_LARGE     0
     #define LV_DEMO_MUSIC_AUTO_PLAY 0
 #endif
-
-/*--END OF LV_CONF_H--*/
-
-#endif /*LV_CONF_H*/
 
 #endif /*End of "Content enable"*/

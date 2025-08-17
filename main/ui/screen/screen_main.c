@@ -31,7 +31,7 @@ void screen_main_init(void)
 {
     // 初始化样式
     lv_style_init(&time_style);
-    lv_style_set_text_font(&time_style, &lv_font_montserrat_14);
+    lv_style_set_text_font(&time_style, &lv_font_montserrat_18);
     lv_style_set_text_color(&time_style, lv_color_white());
 
     lv_style_init(&date_style);
